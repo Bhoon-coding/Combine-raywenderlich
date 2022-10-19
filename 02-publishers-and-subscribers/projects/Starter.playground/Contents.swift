@@ -4,7 +4,42 @@ import _Concurrency
 
 var subscriptions = Set<AnyCancellable>()
 
-<#Add your code here#>
+example(of: "Publisher") {
+    // 1
+    let myNotification = Notification.Name("MyNotification")
+    
+    // 2
+    let publisher = NotificationCenter.default.publisher(for: myNotification,
+                                                         object: nil)
+    
+    // 3
+    let center = NotificationCenter.default
+    
+    // 4
+    let observer = center.addObserver(
+        forName: myNotification,
+        object: nil,
+        queue: nil) { notification in
+        print("Notification received!")
+    }
+    
+    // 5
+    center.post(name: myNotification, object: nil)
+    
+    // 6
+    center.removeObserver(observer)
+}
+
+example(of: "Subscriber") {
+    let myNotification = Notification.Name("MyNotification")
+    let center = NotificationCenter.default
+    let publisher = center.publisher(for: myNotification, object: nil)
+    let subscription = publisher.sink { _ in
+        print("Notification received from a publisher!")
+    }
+    center.post(name: myNotification, object: nil)
+    subscription.cancel()
+}
 
 /// Copyright (c) 2021 Razeware LLC
 ///
