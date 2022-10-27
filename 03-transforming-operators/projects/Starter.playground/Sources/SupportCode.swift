@@ -62,7 +62,7 @@ public func quadrantOf(x: Int, y: Int) -> String {
   case (1..., ..<0):
     quadrant = "4"
   default:
-    quadrant = "boundary"
+    quadrant = "boundary(경계선)"
   }
   
   return quadrant
