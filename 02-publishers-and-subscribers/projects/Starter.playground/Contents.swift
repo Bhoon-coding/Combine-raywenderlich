@@ -2,7 +2,7 @@ import Foundation
 import Combine
 import _Concurrency
 
-var subscriptions = Set<AnyCancellable>()
+//var subscriptions = Set<AnyCancellable>()
 
 //example(of: "Publisher") {
 //    // 1
@@ -133,97 +133,154 @@ var subscriptions = Set<AnyCancellable>()
 //}
 
 // TODO: PassthroughSubject
-example(of: "PassthroughSubject") {
-  // 1
-  enum MyError: Error {
-    case test
-  }
+//example(of: "PassthroughSubject") {
+//  // 1
+//  enum MyError: Error {
+//    case test
+//  }
+//
+//  // 2
+//  final class StringSubscriber: Subscriber {
+//    typealias Input = String
+//    typealias Failure = MyError
+//
+//    func receive(subscription: Subscription) {
+//      subscription.request(.max(2))
+//    }
+//
+//    func receive(_ input: String) -> Subscribers.Demand {
+//      print("Received value", input)
+//      // 3
+//      return input == "World" ? .max(1) : .none
+//    }
+//
+//    func receive(completion: Subscribers.Completion<MyError>) {
+//      print("Received completion", completion)
+//    }
+//  }
+//
+//  // 4
+//  let subscriber = StringSubscriber()
+//
+//  // 5
+//  let subject = PassthroughSubject<String, MyError>()
+//
+//  // 6
+//  subject.subscribe(subscriber)
+//
+//  // 7
+//  let subscription = subject
+//    .sink(
+//      receiveCompletion: { completion in
+//        print("Received completion (sink)", completion)
+//      },
+//      receiveValue: { value in
+//        print("Received value (sink)", value)
+//      }
+//    )
+//
+////    let subscription2 = subject
+////        .sink(receiveCompletion: { completion in
+////            print("Received completion (sink)", completion)
+////        }, receiveValue: { value in
+////            print("Received value (sink)", value)
+////        })
+//
+//    subject.send("Hello")
+//    subject.send("World")
+//
+//    // 8
+//    subscription.cancel()
+//
+//    // 9
+//    subject.send("Still there?")
+//
+//    subject.send(completion: .failure(MyError.test))
+//    subject.send(completion: .finished)
+//    subject.send("How about another one?")
+//}
 
-  // 2
-  final class StringSubscriber: Subscriber {
-    typealias Input = String
-    typealias Failure = MyError
+// TODO: [x] custom subscriber
 
-    func receive(subscription: Subscription) {
-      subscription.request(.max(2))
+//example(of: "Custom Subscriber") {
+//    let publisher = (1...6).publisher
+//
+//    final class IntSubscriber: Subscriber {
+//
+//        typealias Input = Int
+//        typealias Failure = Never
+//
+//        func receive(subscription: Subscription) {
+//            subscription.request(.max(3))
+//        }
+//
+//        func receive(_ input: Int) -> Subscribers.Demand {
+//            print("Received value", input)
+//            return .unlimited
+//        }
+//
+//        func receive(completion: Subscribers.Completion<Never>) {
+//            print("Received completion", completion)
+//        }
+//    }
+//
+//    let subscriber = IntSubscriber()
+//    publisher.subscribe(subscriber)
+//}
+
+/*
+ == return .none ==
+ ——— Example of: Custom Subscriber ———
+ Received value 1
+ Received value 2
+ Received value 3
+*/
+
+/*
+ == return .unlimited ==
+ ——— Example of: Custom Subscriber ———
+ Received value 1
+ Received value 2
+ Received value 3
+ Received value 4
+ Received value 5
+ Received value 6
+ Received completion finished
+*/
+
+// TODO: [x] Hello Future
+
+var subscriptions = Set<AnyCancellable>()
+
+example(of: "Future") {
+    func futureIncrement(
+        integer: Int,
+        afterDelay delay: TimeInterval) -> Future<Int, Never> {
+            Future<Int, Never> { promise in
+                print("Original")
+                DispatchQueue.global().asyncAfter(deadline: .now() + delay) {
+                    promise(.success(integer + 1))
+                }
+            }
     }
-
-    func receive(_ input: String) -> Subscribers.Demand {
-      print("Received value", input)
-      // 3
-      return input == "World" ? .max(1) : .none
-    }
-
-    func receive(completion: Subscribers.Completion<MyError>) {
-      print("Received completion", completion)
-    }
-  }
-
-  // 4
-  let subscriber = StringSubscriber()
-
-  // 5
-  let subject = PassthroughSubject<String, MyError>()
-
-  // 6
-  subject.subscribe(subscriber)
-
-  // 7
-  let subscription = subject
-    .sink(
-      receiveCompletion: { completion in
-        print("Received completion (sink)", completion)
-      },
-      receiveValue: { value in
-        print("Received value (sink)", value)
-      }
-    )
+    let future = futureIncrement(integer: 1, afterDelay: 3)
     
-//    let subscription2 = subject
-//        .sink(receiveCompletion: { completion in
-//            print("Received completion (sink)", completion)
-//        }, receiveValue: { value in
-//            print("Received value (sink)", value)
-//        })
+    future
+        .sink(receiveCompletion: { print($0) },
+              receiveValue: { print($0) })
+        .store(in: &subscriptions)
     
-    subject.send("Hello")
-    subject.send("World")
-    
-    // 8
-    subscription.cancel()
-    
-    // 9
-    subject.send("Still there?")
-    
-    subject.send(completion: .failure(MyError.test))
-    subject.send(completion: .finished)
-    subject.send("How about another one?")
+    future
+        .sink(receiveCompletion: { print("Second", $0) },
+              receiveValue: { print("Second", $0) })
+        .store(in: &subscriptions)
 }
 
-/// Copyright (c) 2021 Razeware LLC
-///
-/// Permission is hereby granted, free of charge, to any person obtaining a copy
-/// of this software and associated documentation files (the "Software"), to deal
-/// in the Software without restriction, including without limitation the rights
-/// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-/// copies of the Software, and to permit persons to whom the Software is
-/// furnished to do so, subject to the following conditions:
-///
-/// The above copyright notice and this permission notice shall be included in
-/// all copies or substantial portions of the Software.
-///
-/// Notwithstanding the foregoing, you may not use, copy, modify, merge, publish,
-/// distribute, sublicense, create a derivative work, and/or sell copies of the
-/// Software in any work that is designed, intended, or marketed for pedagogical or
-/// instructional purposes related to programming, coding, application development,
-/// or information technology.  Permission for such use, copying, modification,
-/// merger, publication, distribution, sublicensing, creation of derivative works,
-/// or sale is expressly withheld.
-///
-/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-/// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-/// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-/// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-/// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-/// THE SOFTWARE.
+/*
+ ——— Example of: Future ———
+ Original
+ 2
+ finished
+ Second 2
+ Second finished
+*/
