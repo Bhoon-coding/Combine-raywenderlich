@@ -3,7 +3,27 @@ import Combine
 
 var subscriptions = Set<AnyCancellable>()
 
-<#Add your code here#>
+example(of: "filter") {
+    // 1. 1~10까지 이벤트 방출
+    let numbers = (1...10).publisher
+    
+    // 2. filter 연산자로, 3의 배수만 걸러냄
+    numbers
+        .filter { $0.isMultiple(of: 3) }  // isMultiple of의 지정된 숫자의 배수이면 true 반환
+        .sink(receiveValue: { num in
+            print("\(num) 은 3의 배수")
+        })
+        .store(in: &subscriptions)
+}
+
+/*
+ ——— Example of: filter ———
+ 3 은 3의 배수
+ 6 은 3의 배수
+ 9 은 3의 배수
+*/
+
+
 
 /// Copyright (c) 2021 Razeware LLC
 ///
