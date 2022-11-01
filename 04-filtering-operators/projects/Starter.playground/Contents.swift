@@ -24,7 +24,7 @@ import Combine
  3 은 3의 배수
  6 은 3의 배수
  9 은 3의 배수
-*/
+ */
 
 // TODO: [x] removeDuplicates
 
@@ -52,21 +52,21 @@ import Combine
  to
  mister
  ?
-*/
+ */
 
 // TODO: [x] compactMap
 
-var subscriptions = Set<AnyCancellable>()
-
-example(of: "compactMap") {
-    
-    let strings = ["a", "1.24", "3", "def", "45", "0.23"].publisher
-
-    strings
-        .compactMap { Float($0) }
-        .sink(receiveValue: { print($0) })
-        .store(in: &subscriptions)
-}
+//var subscriptions = Set<AnyCancellable>()
+//
+//example(of: "compactMap") {
+//
+//    let strings = ["a", "1.24", "3", "def", "45", "0.23"].publisher
+//
+//    strings
+//        .compactMap { Float($0) }
+//        .sink(receiveValue: { print($0) })
+//        .store(in: &subscriptions)
+//}
 
 /*
  ——— Example of: compactMap ———
@@ -74,6 +74,53 @@ example(of: "compactMap") {
  3.0
  45.0
  0.23
+ */
+
+// TODO: [x] ignoreOutput
+
+//var subscriptions = Set<AnyCancellable>()
+//
+//example(of: "ignoreOutput") {
+//    let numbers = (1...10_000).publisher
+//
+//    numbers
+//        .ignoreOutput()
+//        .sink(receiveCompletion: { print("Completed with: \($0)") },
+//              receiveValue: { print($0) })
+//        .store(in: &subscriptions)
+//}
+//
+///*
+// ——— Example of: ignoreOutput ———
+// Completed with: finished
+//*/
+
+// TODO: [] first(where:)
+
+var subscriptions = Set<AnyCancellable>()
+
+example(of: "first(where:)") {
+    
+    let strings = ["bc", "ad", "abc"].publisher
+    
+    
+    strings
+        .print("strings")
+        .first(where: { $0.contains(where: { char in char == "a" })} )
+        .sink(receiveCompletion: { print("Completed with: \($0)")},
+              receiveValue: { print($0) })
+        .store(in: &subscriptions)
+}
+
+/*
+ ——— Example of: first(where:) ———
+ strings: receive subscription: (["bc", "ad", "abc"])
+ strings: request unlimited
+ strings: receive value: (bc)
+ strings: receive value: (ad)
+ strings: receive cancel
+ ad
+ Completed with: finished
 */
 
 /// Copyright (c) 2021 Razeware LLC
