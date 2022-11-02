@@ -218,27 +218,27 @@ import Combine
 
 // TODO: [x] drop(untilOutputFrom: isReady)
 
-var subscriptions = Set<AnyCancellable>()
-
-example(of: "drop(untilOutputFrom:)") {
-    
-    let isReady = PassthroughSubject<Void, Never>()
-    let taps = PassthroughSubject<Int, Never>()
-    
-    taps
-        .drop(untilOutputFrom: isReady)
-        .sink(receiveValue: { print($0) })
-        .store(in: &subscriptions)
-    
-    (1...5).forEach { n in
-        taps.send(n) // 1, 2, 3 까지 생략
-        
-        if n == 3 {
-            isReady.send() // isReady 활성화 >> 이후 이벤트 emit
-        }
-    }
-    
-}
+//var subscriptions = Set<AnyCancellable>()
+//
+//example(of: "drop(untilOutputFrom:)") {
+//
+//    let isReady = PassthroughSubject<Void, Never>()
+//    let taps = PassthroughSubject<Int, Never>()
+//
+//    taps
+//        .drop(untilOutputFrom: isReady)
+//        .sink(receiveValue: { print($0) })
+//        .store(in: &subscriptions)
+//
+//    (1...5).forEach { n in
+//        taps.send(n) // 1, 2, 3 까지 생략
+//
+//        if n == 3 {
+//            isReady.send() // isReady 활성화 >> 이후 이벤트 emit
+//        }
+//    }
+//
+//}
 
 /*
  ——— Example of: drop(untilOutputFrom:) ———
@@ -246,6 +246,80 @@ example(of: "drop(untilOutputFrom:)") {
  5
 */
 
+// TODO: [x] prefix(_:)
+
+//var subscriptions = Set<AnyCancellable>()
+//
+//example(of: "prefix") {
+//
+//    let numbers = (1...10).publisher
+//
+//    numbers
+//        .prefix(2)
+//        .sink(receiveCompletion: { print("Completed with: \($0)") },
+//              receiveValue: { print($0) })
+//        .store(in: &subscriptions)
+//}
+/*
+ ——— Example of: prefix ———
+ 1
+ 2
+ Completed with: finished
+*/
+
+// TODO: [x] prefix(while:)
+
+//var subscriptions = Set<AnyCancellable>()
+//
+//example(of: "prefix(while:)") {
+//
+//    let numbers = (1...10).publisher
+//
+//    numbers
+//        .prefix(while: { $0 < 3 })
+//        .sink(receiveCompletion: { print("Completed with: \($0)") },
+//              receiveValue: { print($0) })
+//        .store(in: &subscriptions)
+//
+//}
+
+/*
+ ——— Example of: prefix(while:) ———
+ 1
+ 2
+ Completed with: finished
+*/
+
+// TODO: [] prefix(untilOutputFrom: isReady)
+
+var subscriptions = Set<AnyCancellable>()
+
+example(of: "prefix(untilOutputFrom: isReady)") {
+    
+    let isReady = PassthroughSubject<Void, Never>()
+    let taps = PassthroughSubject<Int, Never>()
+    
+    taps
+        .prefix(untilOutputFrom: isReady)
+        .sink(receiveCompletion: { print("Completed with: \($0)") },
+              receiveValue: { print($0) })
+        .store(in: &subscriptions)
+    
+    (1...5).forEach { n in
+        taps.send(n)
+        
+        if n == 2 {
+            isReady.send()
+        }
+    }
+}
+
+/*
+ ——— Example of: prefix(untilOutputFrom: isReady) ———
+ 1
+ 2
+ Completed with: finished
+*/
 
 /// Copyright (c) 2021 Razeware LLC
 ///
