@@ -95,22 +95,22 @@ import Combine
 // Completed with: finished
 //*/
 
-// TODO: [] first(where:)
+// TODO: [x] first(where:)
 
-var subscriptions = Set<AnyCancellable>()
-
-example(of: "first(where:)") {
-    
-    let strings = ["bc", "ad", "abc"].publisher
-    
-    
-    strings
-        .print("strings")
-        .first(where: { $0.contains(where: { char in char == "a" })} )
-        .sink(receiveCompletion: { print("Completed with: \($0)")},
-              receiveValue: { print($0) })
-        .store(in: &subscriptions)
-}
+//var subscriptions = Set<AnyCancellable>()
+//
+//example(of: "first(where:)") {
+//
+//    let strings = ["bc", "ad", "abc"].publisher
+//
+//
+//    strings
+//        .print("strings")
+//        .first(where: { $0.contains(where: { char in char == "a" })} )
+//        .sink(receiveCompletion: { print("Completed with: \($0)")},
+//              receiveValue: { print($0) })
+//        .store(in: &subscriptions)
+//}
 
 /*
  ——— Example of: first(where:) ———
@@ -122,6 +122,130 @@ example(of: "first(where:)") {
  ad
  Completed with: finished
 */
+
+// TODO: [x] last(where:)
+
+//var subscriptions = Set<AnyCancellable>()
+//
+//example(of: "last(where:)") {
+//
+//    let numbers = (1...9).publisher
+//
+//    numbers
+//        .last(where: { $0 % 2 == 0 })
+//        .sink(receiveCompletion: { print("Completed with: \($0)") },
+//              receiveValue: { print($0) })
+//        .store(in: &subscriptions)
+//}
+/*
+ ——— Example of: last(where:) ———
+ 8
+ Completed with: finished
+*/
+
+//var subscriptions = Set<AnyCancellable>()
+//
+//example(of: "last(where:) 2") {
+//    let numbers = PassthroughSubject<Int, Never>()
+//
+//    numbers
+//        .last(where: { $0 % 2 == 0 })
+//        .sink(receiveCompletion: { print("Completed with: \($0)") },
+//              receiveValue: { print($0) })
+//        .store(in: &subscriptions)
+//
+//    numbers.send(1)
+//    numbers.send(2)
+//    numbers.send(3)
+//    numbers.send(4)
+//    numbers.send(5)
+//    numbers.send(completion: .finished)
+//}
+/*
+ ——— Example of: last(where:) 2 ———
+ 4
+ Completed with: finished
+*/
+
+// TODO: [x] dropFirst()
+
+//var subscriptions = Set<AnyCancellable>()
+//
+//example(of: "dropFirst") {
+//
+//    let numbers = (1...10).publisher
+//
+//    numbers
+//        .dropFirst(8)
+//        .sink(receiveValue: { print($0) })
+//        .store(in: &subscriptions)
+//}
+/*
+ ——— Example of: dropFirst ———
+ 9
+ 10
+*/
+
+// TODO: [x] drop(while:)
+
+//var subscriptions = Set<AnyCancellable>()
+//
+//example(of: "drop(while:)") {
+//
+//    let numbers = (1...10).publisher
+//
+//    numbers
+//        .drop(while: {
+//            print("x")
+//            return $0 % 5 != 0 }) // 조건에 만족하는 숫자가 나오기전 요소들은 다 생략
+//        .sink(receiveValue: { print($0) })
+//        .store(in: &subscriptions)
+//}
+/*
+ ——— Example of: drop(while:) ———
+ x
+ x
+ x
+ x
+ x
+ 5
+ 6
+ 7
+ 8
+ 9
+ 10
+*/
+
+// TODO: [x] drop(untilOutputFrom: isReady)
+
+var subscriptions = Set<AnyCancellable>()
+
+example(of: "drop(untilOutputFrom:)") {
+    
+    let isReady = PassthroughSubject<Void, Never>()
+    let taps = PassthroughSubject<Int, Never>()
+    
+    taps
+        .drop(untilOutputFrom: isReady)
+        .sink(receiveValue: { print($0) })
+        .store(in: &subscriptions)
+    
+    (1...5).forEach { n in
+        taps.send(n) // 1, 2, 3 까지 생략
+        
+        if n == 3 {
+            isReady.send() // isReady 활성화 >> 이후 이벤트 emit
+        }
+    }
+    
+}
+
+/*
+ ——— Example of: drop(untilOutputFrom:) ———
+ 4
+ 5
+*/
+
 
 /// Copyright (c) 2021 Razeware LLC
 ///
