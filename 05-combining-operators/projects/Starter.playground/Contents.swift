@@ -1,34 +1,108 @@
 import UIKit
 import Combine
 
+// TODO: [x] prepend(output)
+
+//var subscriptions = Set<AnyCancellable>()
+//
+//example(of: "prepend(output)") {
+//
+//    let publisher = [3, 4].publisher
+//
+//    publisher
+//        .prepend(1, 2)
+//        .prepend(-1, -2)
+//        .sink(receiveValue: { print($0) })
+//        .store(in: &subscriptions)
+//}
+
+/*
+ ——— Example of: prepend(output) ———
+ -1
+ -2
+ 1
+ 2
+ 3
+ 4
+*/
+
+
+// TODO: [x] prepend(Sequence)
+
+//var subscriptions = Set<AnyCancellable>()
+//
+//example(of: "prepend(Sequence)") {
+//
+//    let publisher = [5, 6, 7].publisher
+//
+//    publisher
+//        .prepend([3, 4])
+//        .prepend(stride(from: 6, to: 11, by: 2))
+//        .prepend(Set(1...2))
+//        .sink(receiveValue: { print($0) })
+//        .store(in: &subscriptions)
+//}
+
+/*
+ ——— Example of: prepend(Sequence) ———
+ 2
+ 1
+ 6
+ 8
+ 10
+ 3
+ 4
+ 5
+ 6
+ 7
+ */
+
+// TODO: [x] prepend(Publisher)
+
+//var subscriptions = Set<AnyCancellable>()
+//
+//example(of: "prepend(Publisher)") {
+//
+//    let publisher1 = [3, 4].publisher
+//    let publisher2 = [1, 2].publisher
+//
+//    publisher1
+//        .prepend(publisher2)
+//        .sink(receiveValue: { print($0) })
+//        .store(in: &subscriptions)
+//}
+//
+///*
+// ——— Example of: prepend(Publisher) ———
+// 1
+// 2
+// 3
+// 4
+//*/
+
+// TODO: [x] prepend(Publisher) with PassthroughSubject
+
 var subscriptions = Set<AnyCancellable>()
 
-<#Add your code here#>
+example(of: "prepend(Publisher) #2") {
 
-// Copyright (c) 2021 Razeware LLC
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// Notwithstanding the foregoing, you may not use, copy, modify, merge, publish,
-// distribute, sublicense, create a derivative work, and/or sell copies of the
-// Software in any work that is designed, intended, or marketed for pedagogical or
-// instructional purposes related to programming, coding, application development,
-// or information technology.  Permission for such use, copying, modification,
-// merger, publication, distribution, sublicensing, creation of derivative works,
-// or sale is expressly withheld.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
+    let publisher1 = [3, 4].publisher
+    let publisher2 = PassthroughSubject<Int, Never>()
+
+    publisher1
+        .prepend(publisher2)
+        .sink(receiveValue: { print($0) })
+        .store(in: &subscriptions)
+    
+    publisher2.send(1)
+    publisher2.send(2)
+    publisher2.send(completion: .finished)  // completion 처리를 해주지 않으면 combine이 이벤트 방출한줄 모름.
+}
+
+/*
+ ——— Example of: prepend(Publisher) #2 ———
+ 1
+ 2
+ 3
+ 4
+ */
