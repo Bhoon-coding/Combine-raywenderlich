@@ -291,3 +291,18 @@ example(of: "switchToLatest - Network Request") {
         taps.send()
     }
 }
+
+/*
+ ——— Example of: switchToLatest - Network Request ———
+ image: receive subscription: (DataTaskPublisher)
+ image: request unlimited
+ image: receive value: (Optional(<UIImage:0x6000009dc630 anonymous {1080, 720} renderingMode=automatic(original)>))
+ image: receive finished
+ image: receive subscription: (DataTaskPublisher)
+ image: request unlimited
+ image: receive cancel
+ image: receive subscription: (DataTaskPublisher)
+ image: request unlimited
+ image: receive value: (Optional(<UIImage:0x6000009d2fd0 anonymous {1080, 1350} renderingMode=automatic(original)>))
+ image: receive finished
+ */
