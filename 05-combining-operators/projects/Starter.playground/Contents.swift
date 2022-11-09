@@ -187,18 +187,18 @@ import Combine
 
 // TODO: [x] append(Publisher)
 
-var subscriptions = Set<AnyCancellable>()
-
-example(of: "append(Publisher)") {
-    
-    let publisher1 = [1, 2].publisher
-    let publisher2 = [3, 4].publisher
-    
-    publisher1
-        .append(publisher2)
-        .sink(receiveValue: { print($0) })
-        .store(in: &subscriptions)
-}
+//var subscriptions = Set<AnyCancellable>()
+//
+//example(of: "append(Publisher)") {
+//
+//    let publisher1 = [1, 2].publisher
+//    let publisher2 = [3, 4].publisher
+//
+//    publisher1
+//        .append(publisher2)
+//        .sink(receiveValue: { print($0) })
+//        .store(in: &subscriptions)
+//}
 
 /*
  ——— Example of: append(Publisher) ———
@@ -207,3 +207,87 @@ example(of: "append(Publisher)") {
  3
  4
  */
+
+// TODO: [x] switchToLatest
+
+//example(of: "switchToLatest") {
+//    var subscriptions = Set<AnyCancellable>()
+//
+//    let publisher1 = PassthroughSubject<Int, Never>()
+//    let publisher2 = PassthroughSubject<Int, Never>()
+//    let publisher3 = PassthroughSubject<Int, Never>()
+//
+//    let publishers = PassthroughSubject<PassthroughSubject<Int, Never>, Never>()
+//
+//    publishers
+//        .switchToLatest() // 최신 publisher로 switch
+//        .sink(receiveCompletion: { _ in print("Completed!")},
+//              receiveValue: { print($0) }
+//        )
+//        .store(in: &subscriptions)
+//
+//    publishers.send(publisher1)
+//    publisher1.send(1)
+//    publisher1.send(2)
+//
+//    publishers.send(publisher2) // publisher2를 구독하므로
+//    publisher1.send(3) // publisher1의 해당 이벤트는 무시됨
+//    publisher2.send(4)
+//    publisher2.send(5)
+//
+//    publishers.send(publisher3) // publisher3를 구독하므로
+//    publisher2.send(6) // publisher2의 해당 이벤트는 무시됨
+//    publisher3.send(7)
+//    publisher3.send(8)
+//    publisher3.send(9)
+//
+//    publisher3.send(completion: .finished)
+//    publishers.send(completion: .finished)
+//}
+
+/*
+ ——— Example of: switchToLatest ———
+ 1
+ 2
+ 4
+ 5
+ 7
+ 8
+ 9
+ Completed!
+ */
+
+var subscriptions = Set<AnyCancellable>()
+
+example(of: "switchToLatest - Network Request") {
+    
+    
+    let url = URL(string: "https://source.unsplash.com/random")!
+    
+    func getImage() -> AnyPublisher<UIImage?, Never> {
+        URLSession.shared
+            .dataTaskPublisher(for: url)
+            .map { data, _ in UIImage(data: data) }
+            .print("image")
+            .replaceError(with: nil)
+            .eraseToAnyPublisher()
+    }
+    
+    let taps = PassthroughSubject<Void, Never>()
+    
+    taps
+        .map { _ in getImage() }
+        .switchToLatest()
+        .sink(receiveValue: { _ in })
+        .store(in: &subscriptions)
+    
+    taps.send()
+    
+    DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+        taps.send()
+    }
+    
+    DispatchQueue.main.asyncAfter(deadline: .now() + 3.1) {
+        taps.send()
+    }
+}
