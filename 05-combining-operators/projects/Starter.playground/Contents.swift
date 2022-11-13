@@ -257,40 +257,41 @@ import Combine
  Completed!
  */
 
-var subscriptions = Set<AnyCancellable>()
-
-example(of: "switchToLatest - Network Request") {
-    
-    
-    let url = URL(string: "https://source.unsplash.com/random")!
-    
-    func getImage() -> AnyPublisher<UIImage?, Never> {
-        URLSession.shared
-            .dataTaskPublisher(for: url)
-            .map { data, _ in UIImage(data: data) }
-            .print("image")
-            .replaceError(with: nil)
-            .eraseToAnyPublisher()
-    }
-    
-    let taps = PassthroughSubject<Void, Never>()
-    
-    taps
-        .map { _ in getImage() }
-        .switchToLatest()
-        .sink(receiveValue: { _ in })
-        .store(in: &subscriptions)
-    
-    taps.send()
-    
-    DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-        taps.send()
-    }
-    
-    DispatchQueue.main.asyncAfter(deadline: .now() + 3.1) {
-        taps.send()
-    }
-}
+// TODO: [x] Advanced Combining
+//var subscriptions = Set<AnyCancellable>()
+//
+//example(of: "switchToLatest - Network Request") {
+//
+//
+//    let url = URL(string: "https://source.unsplash.com/random")!
+//
+//    func getImage() -> AnyPublisher<UIImage?, Never> {
+//        URLSession.shared
+//            .dataTaskPublisher(for: url)
+//            .map { data, _ in UIImage(data: data) }
+//            .print("image")
+//            .replaceError(with: nil)
+//            .eraseToAnyPublisher()
+//    }
+//
+//    let taps = PassthroughSubject<Void, Never>()
+//
+//    taps
+//        .map { _ in getImage() }
+//        .switchToLatest()
+//        .sink(receiveValue: { _ in })
+//        .store(in: &subscriptions)
+//
+//    taps.send()
+//
+//    DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+//        taps.send()
+//    }
+//
+//    DispatchQueue.main.asyncAfter(deadline: .now() + 3.1) {
+//        taps.send()
+//    }
+//}
 
 /*
  ——— Example of: switchToLatest - Network Request ———
@@ -305,4 +306,116 @@ example(of: "switchToLatest - Network Request") {
  image: request unlimited
  image: receive value: (Optional(<UIImage:0x6000009d2fd0 anonymous {1080, 1350} renderingMode=automatic(original)>))
  image: receive finished
+ */
+
+// TODO: [x] merge(with:)
+
+//var subscriptions = Set<AnyCancellable>()
+//
+//example(of: "merge(with:)") {
+//    let publisher1 = PassthroughSubject<Int, Never>()
+//    let publisher2 = PassthroughSubject<Int, Never>()
+//
+//    publisher1
+//        .merge(with: publisher2)
+//        .sink(receiveCompletion: { _ in print("Completed")},
+//              receiveValue: { print($0) })
+//        .store(in: &subscriptions)
+//
+//    publisher1.send(1)
+//    publisher1.send(2)
+//
+//    publisher2.send(3)
+//
+//    publisher1.send(4)
+//    publisher2.send(5)
+//
+//    publisher1.send(completion: .finished)
+//    publisher2.send(completion: .finished)
+//}
+
+/*
+ ——— Example of: merge(with:) ———
+ 1
+ 2
+ 3
+ 4
+ 5
+ Completed
+ */
+
+// TODO: [x] combineLatest
+
+//var subscriptions = Set<AnyCancellable>()
+
+//example(of: "combineLatest") {
+//
+//    let publisher1 = PassthroughSubject<Int, Never>()
+//    let publisher2 = PassthroughSubject<String, Never>()
+//
+//    publisher1
+//        .combineLatest(publisher2)
+//        .sink(receiveCompletion: { _ in print("Completed")},
+//              receiveValue: { print("P1: \($0), P2: \($1)") })
+//        .store(in: &subscri87ptions)
+//
+//    publisher1.send(1)
+//    publisher1.send(2)
+//
+//    publisher2.send("a")
+//    publisher2.send("b")
+//
+//    publisher1.send(3)
+//
+//    publisher2.send("c")
+//
+//    publisher1.send(completion: .finished)
+//    publisher2.send(completion: .finished)
+//}
+
+/*
+ ——— Example of: combineLatest ———
+ P1: 2, P2: a
+ P1: 2, P2: b
+ P1: 3, P2: b
+ P1: 3, P2: c
+ Completed
+ */
+
+// TODO: [x] zip
+
+var subscriptions = Set<AnyCancellable>()
+
+example(of: "zip") {
+    
+    let publisher1 = PassthroughSubject<Int, Never>()
+    let publisher2 = PassthroughSubject<String, Never>()
+    
+    publisher1
+        .zip(publisher2)
+        .sink(
+            receiveCompletion: { _ in print("Completed") },
+            receiveValue: { print("P1: \($0), P2: \($1)") }
+        )
+        .store(in: &subscriptions)
+    
+    publisher1.send(1)
+    publisher1.send(2)
+    publisher2.send("a")
+    publisher2.send("b")
+    publisher1.send(3)
+    publisher2.send("c")
+    publisher2.send("d")
+    
+    publisher1.send(completion: .finished)
+    publisher2.send(completion: .finished)
+    
+}
+
+/*
+ ——— Example of: zip ———
+ P1: 1, P2: a
+ P1: 2, P2: b
+ P1: 3, P2: c
+ Completed
  */
