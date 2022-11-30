@@ -2,15 +2,15 @@ import Combine
 import SwiftUI
 import PlaygroundSupport
 
-//enum TimeoutError: Error {
-//    case timeout
-//}
+enum TimeoutError: Error {
+    case timeout
+}
 
-let subject = PassthroughSubject<Void, Never>()
+let subject = PassthroughSubject<Void, TimeoutError>()
 
 let timedOutSubject = subject.timeout(.seconds(5),
-                                      scheduler: DispatchQueue.main)
-//                                      customError: { .timeout })
+                                      scheduler: DispatchQueue.main,
+                                      customError: { .timeout })
     
 let timeline = TimelineView(title: "Button taps")
 
