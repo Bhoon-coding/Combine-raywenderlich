@@ -14,7 +14,6 @@ let subscription1 = shared
           receiveValue: { print("subscription1 received: '\($0)'") }
     )
 
-print("subscribing second")
 
 var subscription2: AnyCancellable? = nil
     
