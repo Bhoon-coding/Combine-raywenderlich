@@ -39,7 +39,9 @@ struct API {
   /// A shared JSON decoder to use in calls.
   private let decoder = JSONDecoder()
   
-  // <#Add your API code here#>
+    func story(id: Int) -> AnyPublisher<Story, Error> {
+        return Empty().eraseToAnyPublisher()
+    }
   
 }
 
