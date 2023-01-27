@@ -52,11 +52,29 @@ struct API {
             .eraseToAnyPublisher()
     }
     
+    func mergedStories(ids storyIDs: [Int]) -> AnyPublisher<Story, Error> {
+        let storyIDs = Array(storyIDs.prefix(maxStories))
+        precondition(!storyIDs.isEmpty)
+        
+        let initialPublisher = story(id: storyIDs[0])
+        let remainder = Array(storyIDs.dropFirst())
+        return remainder.reduce(initialPublisher) { combined, id in
+            return combined
+                .merge(with: story(id: id))
+                .eraseToAnyPublisher()
+        }
+    }
+    
 }
 
 let api = API()
 var subscriptions = [AnyCancellable]()
-api.story(id: 5)
+//api.story(id: 5)
+//    .sink(receiveCompletion: { print($0) },
+//          receiveValue: { print($0) })
+//    .store(in: &subscriptions)
+
+api.mergedStories(ids: [1000, 1001, 1002])
     .sink(receiveCompletion: { print($0) },
           receiveValue: { print($0) })
     .store(in: &subscriptions)
