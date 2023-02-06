@@ -30,7 +30,7 @@ import SwiftUI
 
 struct ReaderView: View {
   var model: ReaderViewModel
-  var presentingSettingsSheet = false
+  @State var presentingSettingsSheet = false
 
   var currentDate = Date()
   
@@ -67,12 +67,13 @@ struct ReaderView: View {
         }.padding()
       }
       .listStyle(PlainListStyle())
-      // Present the Settings sheet here
+      .sheet(isPresented: self.$presentingSettingsSheet, // $변수명 = 해당 변수값이 변하는걸 감지
+             content: { SettingsView() })
       // Display errors here
       .navigationBarTitle(Text("\(self.model.stories.count) Stories"))
       .navigationBarItems(trailing:
         Button("Settings") {
-          // Set presentingSettingsSheet to true here
+          self.presentingSettingsSheet = true // Settings 버튼을 누르면 presentingSettingsSheet을 true로 바꿈
           
         }
       )
