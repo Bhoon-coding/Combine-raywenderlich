@@ -27,9 +27,10 @@
 /// THE SOFTWARE.
 
 import SwiftUI
+import Combine
 
 struct ReaderView: View {
-  var model: ReaderViewModel
+  @ObservableObject var model = ReaderViewModel() /// 웨않뒈 .. (에러): Unknown attribute 'ObservableObject'
   @State var presentingSettingsSheet = false
 
   var currentDate = Date()

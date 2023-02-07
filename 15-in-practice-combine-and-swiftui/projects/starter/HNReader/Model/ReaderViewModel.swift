@@ -29,9 +29,12 @@
 import Combine
 import Foundation
 
-class ReaderViewModel {
+/// 질문: @State, @Published의 차이점?
+/// @Published는 바뀌는 값(변수)들 앞에 쓰는것?
+
+class ReaderViewModel: ObservableObject { /// ObservableObject: 데이터가 변경됨을 알려주는 프로토콜
     private let api = API()
-    private var allStories = [Story]()
+    @Published private var allStories = [Story]() /// Published: 프로퍼티래퍼
     private var subscriptions = Set<AnyCancellable>()
     
     var filter = [String]()
@@ -48,7 +51,7 @@ class ReaderViewModel {
             }
     }
     
-    var error: API.Error? = nil
+    @Published var error: API.Error? = nil
     
     func fetchStroies() {
         api
