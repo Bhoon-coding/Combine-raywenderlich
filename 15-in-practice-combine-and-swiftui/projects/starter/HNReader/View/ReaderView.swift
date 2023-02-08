@@ -26,6 +26,7 @@
 /// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 /// THE SOFTWARE.
 
+import Combine
 import SwiftUI
 
 struct ReaderView: View {
@@ -33,7 +34,10 @@ struct ReaderView: View {
     @ObservedObject var model: ReaderViewModel
     @State var presentingSettingsSheet = false
     
-    var currentDate = Date()
+    @State var currentDate = Date()
+    private let timer = Timer.publish(every: 10, on: .main, in: .common)
+        .autoconnect()
+        .eraseToAnyPublisher()
     
     init(model: ReaderViewModel) {
         self.model = model
@@ -64,13 +68,15 @@ struct ReaderView: View {
                         }
                         .padding()
                     }
-                    // Add timer here
+                    .onReceive(timer) {
+                        self.currentDate = $0
+                    }
                 }.padding()
             }
             .listStyle(PlainListStyle())
             .sheet(isPresented: self.$presentingSettingsSheet, // $변수명 = 해당 변수값이 변하는걸 감지
                    content: { SettingsView() })
-            .alert(item: self.$model.error, content: { error in 
+            .alert(item: self.$model.error, content: { error in
                 Alert(title: Text("Network error"),
                       message: Text(error.localizedDescription),
                       dismissButton: .cancel()
