@@ -30,7 +30,7 @@ import Combine
 import SwiftUI
 
 struct ReaderView: View {
-    
+    @Environment(\.colorScheme) var colorScheme: ColorScheme
     @ObservedObject var model: ReaderViewModel
     @State var presentingSettingsSheet = false
     
@@ -63,7 +63,7 @@ struct ReaderView: View {
                                 print(story)
                             }
                             .font(.subheadline)
-                            .foregroundColor(Color.blue)
+                            .foregroundColor(self.colorScheme == .light ? .blue : .orange)
                             .padding(.top, 6)
                         }
                         .padding()
