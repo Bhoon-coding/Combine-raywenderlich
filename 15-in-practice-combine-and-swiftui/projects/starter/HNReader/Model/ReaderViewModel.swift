@@ -37,7 +37,7 @@ class ReaderViewModel: ObservableObject { /// ObservableObject: 데이터가 변
     @Published private var allStories = [Story]() /// Published: 프로퍼티래퍼
     private var subscriptions = Set<AnyCancellable>()
     
-    var filter = [String]()
+    @Published var filter = [String]()
     
     var stories: [Story] {
         guard !filter.isEmpty else {

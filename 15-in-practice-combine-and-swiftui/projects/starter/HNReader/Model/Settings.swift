@@ -26,10 +26,11 @@
 /// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 /// THE SOFTWARE.
 
+import Combine
 import Foundation
 
-final class Settings {
-  init() { }
-  
-  var keywords = [FilterKeyword]()
+final class Settings: ObservableObject {
+    init() { }
+    
+    @Published var keywords = [FilterKeyword]()
 }
