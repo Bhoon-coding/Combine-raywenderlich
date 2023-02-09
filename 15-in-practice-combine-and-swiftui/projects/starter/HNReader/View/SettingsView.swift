@@ -42,14 +42,14 @@ fileprivate struct SettingsBarItems: View {
 
 /// A settings view showing a list of filter keywrods.
 struct SettingsView: View {
-  
+  @EnvironmentObject var settings: Settings
   @State var presentingAddKeywordSheet = false
   
   var body: some View {
     NavigationView {
       List {
         Section(header: Text("Filter keywords")) {
-          ForEach([FilterKeyword]()) { keyword in
+            ForEach(settings.keywords) { keyword in
             HStack(alignment: .top) {
               Image(systemName: "star")
                 .resizable()
@@ -63,9 +63,11 @@ struct SettingsView: View {
           // List editing actions
         }
       }
-      .sheet(isPresented: $presentingAddKeywordSheet) {
+      .sheet(isPresented: $presentingAddKeywordSheet) { /// @State와 연동
         AddKeywordView(completed: { newKeyword in
-          
+            let new = FilterKeyword(value: newKeyword.lowercased())
+            self.settings.keywords.append(new)
+            self.presentingAddKeywordSheet = false
         })
         .frame(minHeight: 0, maxHeight: 400, alignment: .center)
       }
@@ -75,7 +77,7 @@ struct SettingsView: View {
   }
   
   private func addKeyword() {
-    
+    presentingAddKeywordSheet = true
   }
   
   private func moveKeyword(from source: IndexSet, to destination: Int) {

@@ -19,6 +19,7 @@ struct HNReader: App {
     var body: some Scene {
         WindowGroup {
             ReaderView(model: viewModel)
+                .environmentObject(userSettings)
                 .onAppear {
                     viewModel.fetchStroies()
                 }
