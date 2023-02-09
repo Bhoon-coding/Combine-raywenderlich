@@ -60,7 +60,8 @@ struct SettingsView: View {
               Text(keyword.value)
             }
           }
-          // List editing actions
+            .onMove(perform: moveKeyword)
+            .onDelete(perform: deleteKeyword)
         }
       }
       .sheet(isPresented: $presentingAddKeywordSheet) { /// @State와 연동
@@ -81,11 +82,17 @@ struct SettingsView: View {
   }
   
   private func moveKeyword(from source: IndexSet, to destination: Int) {
-    
+      guard let source = source.first,
+            destination != settings.keywords.endIndex else {
+          return
+      }
+      
+      settings.keywords
+          .swapAt(source, source > destination ? destination : destination - 1)
   }
   
   private func deleteKeyword(at index: IndexSet) {
-    
+      settings.keywords.remove(at: index.first!)
   }
 }
 
