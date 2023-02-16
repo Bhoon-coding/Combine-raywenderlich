@@ -2,10 +2,30 @@ import Foundation
 import Combine
 
 var subscriptions = Set<AnyCancellable>()
+enum MyError: Error {
+    case ohNo
+}
 //: ## Never
 example(of: "Never sink") {
     Just("Hello")
         .sink(receiveValue: { print($0) })
+        .store(in: &subscriptions)
+}
+
+example(of: "setFailureType") {
+    Just("Hello")
+        .setFailureType(to: MyError.self)
+        .sink(receiveCompletion: { completion in
+            switch completion {
+            case .failure(.ohNo):
+                print("Finished with Oh no")
+            case .finished:
+                print("Finished successfully")
+            }
+        }, receiveValue: { value in
+            print("Got value: \(value)")
+        }
+        )
         .store(in: &subscriptions)
 }
 //: [Next](@next)
