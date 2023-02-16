@@ -31,6 +31,7 @@ import SwiftUI
 
 struct ReaderView: View {
     @Environment(\.colorScheme) var colorScheme: ColorScheme
+    @EnvironmentObject var settings: Settings
     @ObservedObject var model: ReaderViewModel
     @State var presentingSettingsSheet = false
     
@@ -44,7 +45,7 @@ struct ReaderView: View {
     }
     
     var body: some View {
-        let filter = "Showing all stories"
+        let filter = settings.keywords.isEmpty ? "Showing all stories" : "Filter: \(settings.keywords.map { $0.value })"
         
         return NavigationView {
             List {
