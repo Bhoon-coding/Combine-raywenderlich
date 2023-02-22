@@ -6,28 +6,53 @@ enum MyError: Error {
     case ohNo
 }
 //: ## Never
-example(of: "Never sink") {
-    Just("Hello")
-        .sink(receiveValue: { print($0) })
-        .store(in: &subscriptions)
-}
+//example(of: "Never sink") {
+//    Just("Hello")
+//        .sink(receiveValue: { print($0) })
+//        .store(in: &subscriptions)
+//}
+//
+//example(of: "setFailureType") {
+//    Just("Hello")
+//        .setFailureType(to: MyError.self)
+//        .sink(receiveCompletion: { completion in
+//            switch completion {
+//            case .failure(.ohNo):
+//                print("Finished with Oh no")
+//            case .finished:
+//                print("Finished successfully")
+//            }
+//        }, receiveValue: { value in
+//            print("Got value: \(value)")
+//        }
+//        )
+//        .store(in: &subscriptions)
+//}
 
-example(of: "setFailureType") {
-    Just("Hello")
-        .setFailureType(to: MyError.self)
-        .sink(receiveCompletion: { completion in
-            switch completion {
-            case .failure(.ohNo):
-                print("Finished with Oh no")
-            case .finished:
-                print("Finished successfully")
+example(of: "assign(to:on:)") {
+    // 1
+    class Person {
+        let id = UUID()
+        var name = "Unknown"
+    }
+    
+    // 2
+    let person = Person()
+    print("1", person.name)
+    
+    Just("Peppo")
+        .handleEvents(
+            receiveCompletion: { _ in
+                print("2", person.name)
             }
-        }, receiveValue: { value in
-            print("Got value: \(value)")
-        }
         )
+        .assign(to: \.name, on: person) // 4
         .store(in: &subscriptions)
 }
+//——— Example of: assign(to:on:) ———
+//1 Unknown
+//2 Peppo
+
 //: [Next](@next)
 
 /// Copyright (c) 2021 Razeware LLC
