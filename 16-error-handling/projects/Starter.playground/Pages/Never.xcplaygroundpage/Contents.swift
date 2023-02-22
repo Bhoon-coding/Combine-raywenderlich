@@ -29,30 +29,57 @@ enum MyError: Error {
 //        .store(in: &subscriptions)
 //}
 
-example(of: "assign(to:on:)") {
-    // 1
-    class Person {
-        let id = UUID()
-        var name = "Unknown"
+//example(of: "assign(to:on:)") {
+//    // 1
+//    class Person {
+//        let id = UUID()
+//        var name = "Unknown"
+//    }
+//
+//    // 2
+//    let person = Person()
+//    print("1", person.name)
+//
+//    Just("Peppo")
+//        .handleEvents(
+//            receiveCompletion: { _ in
+//                print("2", person.name)
+//            }
+//        )
+//        .assign(to: \.name, on: person) // 4
+//        .store(in: &subscriptions)
+//}
+////——— Example of: assign(to:on:) ———
+////1 Unknown
+////2 Peppo
+
+example(of: "assign(to:)") {
+    class MyViewModel: ObservableObject {
+        // 1
+        @Published var currentDate = Date()
+        
+        init() {
+            Timer.publish(every: 1, on: .main, in: .common) // 2
+                .autoconnect()
+                .prefix(3) // 3
+                .assign(to: &$currentDate)
+//                .assign(to: \.currentDate, on: self) // 4
+//                .store(in: &subscriptions)
+        }
     }
     
-    // 2
-    let person = Person()
-    print("1", person.name)
-    
-    Just("Peppo")
-        .handleEvents(
-            receiveCompletion: { _ in
-                print("2", person.name)
-            }
-        )
-        .assign(to: \.name, on: person) // 4
+    // 5
+    let vm = MyViewModel()
+    vm.$currentDate
+        .sink(receiveValue: { print($0) })
         .store(in: &subscriptions)
 }
-//——— Example of: assign(to:on:) ———
-//1 Unknown
-//2 Peppo
 
+//——— Example of: assign(to:) ———
+//2023-02-22 00:30:23 +0000
+//(1초후)2023-02-22 00:30:24 +0000
+//(1초후)2023-02-22 00:30:25 +0000
+//(1초후)2023-02-22 00:30:26 +0000
 //: [Next](@next)
 
 /// Copyright (c) 2021 Razeware LLC
