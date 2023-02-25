@@ -3,8 +3,28 @@ import Foundation
 import Combine
 
 var subscriptions = Set<AnyCancellable>()
+
 //: ## try* operators
-<#Add your code here#>
+example(of: "tryMap") {
+    // 1
+    enum NameError: Error {
+        case tooShort(String)
+        case unowned
+    }
+    
+    // 2
+    let names = ["Marin", "Shai", "Florent"].publisher
+    
+    names
+    // 3
+        .map { value in
+            return value.count
+        }
+        .sink(receiveCompletion: { print("Completed with \($0)") },
+              receiveValue: { print("Got value: \($0)") }
+        )
+}
+
 //: [Next](@next)
 
 /// Copyright (c) 2021 Razeware LLC
