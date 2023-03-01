@@ -4,7 +4,34 @@ import Combine
 
 var subscriptions = Set<AnyCancellable>()
 //:## Mapping errors
-<#Add your code here#>
+example(of: "map vs tryMap") {
+    enum NameError: Error {
+        case tooShort(String)
+        case unowned
+    }
+    
+    Just("Hello")
+        .setFailureType(to: NameError.self)
+        .tryMap { throw NameError.tooShort($0) }
+        .mapError { $0 as? NameError ?? .unowned }
+        .sink(
+            receiveCompletion: { completion in
+                switch completion {
+                case .finished:
+                    print("Done!")
+                case .failure(.tooShort(let name)):
+                    print("\(name) is too short!")
+                case .failure(.unowned):
+                    print("An unknown name error occurred")
+                }
+            },
+            receiveValue: { print("Got value \($0)") }
+        )
+        .store(in: &subscriptions)
+}
+//——— Example of: map vs tryMap ———
+//Hello is too short!
+
 //: [Next](@next)
 
 /// Copyright (c) 2021 Razeware LLC
