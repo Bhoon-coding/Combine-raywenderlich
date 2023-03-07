@@ -1,7 +1,29 @@
 import Foundation
 import Combine
 
-<# Add code here #>
+// 1
+let computationPublisher = Publishers.ExpensiveComputation(duration: 3)
+
+// 2
+let queue = DispatchQueue(label: "serial queue")
+
+// 3
+let currentThread = Thread.current.number
+print("Start computation publisher on thread \(currentThread)")
+
+let subscription = computationPublisher
+    .subscribe(on: queue)
+    .sink { value in
+        let thread = Thread.current.number
+        print("Received computation result on thread \(thread): '\(value)")
+    }
+//Start computation publisher on thread 1
+//ExpensiveComputation subscriber received on thread 7
+//Beginning expensive computation on thread 7
+//Completed expensive computation on thread 7
+//Received computation result on thread 7: 'Computation complete
+
+
 
 //: [Next](@next)
 /*:
