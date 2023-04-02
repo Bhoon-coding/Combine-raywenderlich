@@ -14,23 +14,24 @@ struct DispatchTimerConfiguration {
 
 extension Publishers {
     struct DispatchTimer: Publisher {
-        // 5
+        // 5 - 현재시간을 DispatchTime 값으로 방출
         typealias Output = DispatchTime
         typealias Failure = Never
         
-        // 6
+        // 6 - subscriber를 받을때 필요
         let configuration: DispatchTimerConfiguration
         
         init(configuration: DispatchTimerConfiguration) {
             self.configuration = configuration
         }
         
+        // 7
         func receive<S: Subscriber>(subscriber: S) where Failure == S.Failure, Output == S.Input {
             // 8
             let subscription = DispatchTimerSubscription(subscriber: subscriber,
                                                          configuration: configuration)
             
-            // 9
+            // 9 - subscription에 요청한만큼 receive
             subscriber.receive(subscription: subscription)
         }
     }
@@ -38,13 +39,13 @@ extension Publishers {
     private final class DispatchTimerSubscription<S: Subscriber>: Subscription where S.Input == DispatchTime {
         // 10
         let configuration: DispatchTimerConfiguration
-        // 11
+        // 11 - 값을 보낼때 마다 감소 시킴
         var times: Subscribers.Demand
-        // 12
+        // 12 - subscriber로 부터 요청 받은 값의 수
         var requested: Subscribers.Demand = .none
-        // 13
+        // 13 -
         var source: DispatchSourceTimer? = nil
-        // 14
+        // 14 - subscription은 subscriber가 완료되거나, 실패, 취소 되지 않는한 구독 유지 해야함
         var subscriber: S?
         
         init(subscriber: S,
@@ -58,7 +59,7 @@ extension Publishers {
         func request(_ demand: Subscribers.Demand) {
             // 16
             guard times > .none else {
-                // 17
+                // 17 
                 subscriber?.receive(completion: .finished)
                 return
             }

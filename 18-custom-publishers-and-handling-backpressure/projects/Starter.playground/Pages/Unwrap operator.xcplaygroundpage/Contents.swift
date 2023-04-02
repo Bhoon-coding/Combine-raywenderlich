@@ -3,7 +3,7 @@ import Combine
 extension Publisher {
     // 1
     func unwrap<T>() -> Publishers.CompactMap<Self, T> where Output == Optional<T> {
-        // 2
+        // 2 compactMap: optional unwrapping & nil 무시
         compactMap { $0 }
     }
 }
