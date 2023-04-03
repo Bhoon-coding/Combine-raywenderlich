@@ -58,4 +58,46 @@ class CombineOperatorsTests: XCTestCase {
             })
             .store(in: &subscriptions)
     }
+    
+    func test_flatMapWithMax2Publishers() {
+        // Given
+        // 1 - intSubject 인스턴스 3개 생성
+        let intSubject1 = PassthroughSubject<Int, Never>()
+        let intSubject2 = PassthroughSubject<Int, Never>()
+        let intSubject3 = PassthroughSubject<Int, Never>()
+        
+        // 2 - int passthroughSubject를 초기값으로 받는 CurrentValueSubject
+        let publisher = CurrentValueSubject<PassthroughSubject<Int, Never>, Never>(intSubject1)
+        
+        // 3 - 예상결과와 실제결과를 보관할 배열
+        let expected = [1, 2, 4]
+        var results = [Int]()
+        
+        // 4 - flatMap을 활용해 최대 두 publisher를 구독. 각자 받아오는 값을 results에 추가(append)
+        publisher
+            .flatMap(maxPublishers: .max(2), { $0 })
+            .sink(receiveValue: {
+                results.append($0)
+            })
+            .store(in: &subscriptions)
+        
+        // When
+        // 5 - intSubject1에 새로운 값(1)을 보냄
+        intSubject1.send(1)
+        
+        // 6 - CurrentValueSubject에 intSubject2를 보낸후, intSubject2에 새로운 값(2)을 보냄
+        publisher.send(intSubject2)
+        intSubject2.send(2)
+        
+        // 7 - CurrentValueSubject에 intSubject3을 보낸후, intSubject3에 새로운 값(3)과 intSubject2에 새로운 값(4)를 보냄.
+        intSubject3.send(3)
+        intSubject2.send(4)
+        
+        // 8 - CurrentValueSubject에 completion event를 보냄
+        publisher.send(completion: .finished)
+        
+        // Then
+        XCTAssert(results == expected,
+                  "Results expected to be \(expected) but were \(results)")
+    }
 }
