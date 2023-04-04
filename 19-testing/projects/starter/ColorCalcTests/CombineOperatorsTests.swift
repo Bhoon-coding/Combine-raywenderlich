@@ -100,4 +100,48 @@ class CombineOperatorsTests: XCTestCase {
         XCTAssert(results == expected,
                   "Results expected to be \(expected) but were \(results)")
     }
+    
+    func test_timerPublish() {
+        // Given
+        // 1 - 소수점 한 자리로 반올림하여 시간 간격을 정규화 하는 함수를 정의.
+        func normalized(_ ti: TimeInterval) -> TimeInterval {
+            return Double(round(ti * 10) / 10)
+        }
+        
+        // 2 - 현재 시간 간격 저장
+        let now = Date().timeIntervalSinceReferenceDate
+        
+        // 3 - 비동기 연산자가 완료될때까지 기다리는 expectation 생성
+        let expectation = self.expectation(description: #function)
+        
+        // 4 - 예상 결과와 실제 결과를 저장하는 배열 정의
+        let expected = [0.5, 1, 1.5]
+        var results = [TimeInterval]()
+        
+        // 5 - autoconnect와 첫 세개의 값만 받아오는 타이머 publisher 생성
+        let publisher = Timer
+            .publish(every: 0.5, on: .main, in: .common)
+            .autoconnect()
+            .prefix(3)
+        
+        // When
+        publisher
+            .sink(receiveCompletion: { _ in expectation.fulfill() },
+                  receiveValue: {
+                results.append(
+                    normalized($0.timeIntervalSinceReferenceDate - now)
+                )
+            })
+            .store(in: &subscriptions)
+        
+        // Then
+        // 6 - 최대 2초 기다림
+        waitForExpectations(timeout: 2, handler: nil)
+        
+        // 7 - 예상값 실제값 테스트
+        XCTAssert(
+            results == expected,
+            "Result expected to be \(expected) but were \(results)"
+        )
+    }
 }
