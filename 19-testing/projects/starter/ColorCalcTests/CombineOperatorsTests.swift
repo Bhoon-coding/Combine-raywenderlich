@@ -144,4 +144,43 @@ class CombineOperatorsTests: XCTestCase {
             "Result expected to be \(expected) but were \(results)"
         )
     }
+    
+    func test_shareReplay() {
+        // Given
+        // 1 - 새로운 int 값을 보내기 위해 subject 생성
+        let subject = PassthroughSubject<Int, Never>()
+        
+        // 2 - publisher 생성
+        let publisher = subject.shareReplay(capacity: 2)
+        
+        // 3
+        let expected = [0, 1, 2, 1, 2, 3, 3]
+        var results = [Int]()
+
+        // When
+        // 4 - publisher와 방출되는 값을 저장하기 위해 subscription 생성
+        publisher
+            .sink(receiveValue: { results.append($0) })
+            .store(in: &subscriptions)
+        
+        // 5 - subject를 통해 값을 보냄
+        subject.send(0)
+        subject.send(1)
+        subject.send(2)
+        
+        // 6 -
+        publisher
+            .sink(receiveValue: { results.append($0) })
+            .store(in: &subscriptions)
+        
+        // 7
+        subject.send(3)
+        // Then
+        
+        XCTAssert(
+            results == expected,
+            "Results expected to be \(expected) but were \(results)"
+        )
+        
+    }
 }
