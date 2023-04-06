@@ -72,7 +72,7 @@ final class CalculatorViewModel: ObservableObject {
       break
     case Constant.backspace:
       if hexText.count > 1 {
-        hexText.removeLast(2)
+        hexText.removeLast()
       }
     case _ where hexText.count < 9:
       hexText += input
@@ -90,7 +90,6 @@ final class CalculatorViewModel: ObservableObject {
     
     hexTextShared
       .map {
-        
         if let name = ColorName(hex: $0) {
             return "\(name) \(Color.opacityString(forHex: $0))"
         } else {
@@ -106,7 +105,7 @@ final class CalculatorViewModel: ObservableObject {
       .share()
     
     colorValuesShared
-      .map { $0 != nil ? Color(values: $0!) : .red }
+      .map { $0 != nil ? Color(values: $0!) : .white }
       .assign(to: &$color)
 
     colorValuesShared
