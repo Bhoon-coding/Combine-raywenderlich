@@ -153,4 +153,27 @@ class ColorCalcTests: XCTestCase {
       "Color expected to be \(expected) but was \(result)"
     )
   }
+
+    func test_processClearSetsHexToHashtag() {
+        // Given
+        let expected = "#"
+        var result = ""
+        
+        viewModel.$hexText
+            .dropFirst()  /// <- backspace를 눌렀을때 효과 아닌가..?
+            .sink(receiveValue: { result = $0 })
+            .store(in: &subscriptions)
+        
+        // When
+        viewModel.process(CalculatorViewModel.Constant.clear) // <- clear하면 "#"만 남음
+        
+        // Then
+        XCTAssert(
+            result == expected,
+            "Hex was expected to be \(expected) but was \"\(result)\""
+        )
+    }
+
+    
 }
+
