@@ -173,4 +173,23 @@ class ColorCalcTests: XCTestCase {
       "Hex was expected to be \(expected) but was \"\(result)\""
     )
   }
+    
+    func test_correctRGBOTextReceived() {
+        // Given
+        let expected = "0, 102, 54, 170"
+        var result = ""
+        
+        viewModel.$rgboText
+            .sink(receiveValue: { result = $0 })
+            .store(in: &subscriptions)
+        
+        // When
+        viewModel.hexText = "#006636AA"
+        
+        // Then
+        XCTAssert(
+            result == expected,
+            "RGBO text expected to be \(expected) but was \(result)"
+        )
+    }
 }

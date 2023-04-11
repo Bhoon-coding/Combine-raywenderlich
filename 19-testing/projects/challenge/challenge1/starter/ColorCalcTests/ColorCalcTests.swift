@@ -82,7 +82,7 @@ class ColorCalcTests: XCTestCase {
       .sink(receiveValue: { result = $0 })
       .store(in: &subscriptions)
 
-    // When
+    // When
     // 3
     viewModel.process(CalculatorViewModel.Constant.backspace)
 
