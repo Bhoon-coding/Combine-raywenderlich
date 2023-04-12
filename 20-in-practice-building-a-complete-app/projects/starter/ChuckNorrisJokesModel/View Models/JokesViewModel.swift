@@ -46,12 +46,31 @@ public final class JokesViewModel {
     @Published public var backgroundColor = Color("Gray")
     @Published public var decisionState = DecisionState.undecided
     
-    public init(jokesService: JokeServiceDataPublisher? = nil) {
-        
+    private let jokesService: JokeServiceDataPublisher
+    
+    public init(jokesService: JokeServiceDataPublisher = JokesService()) {
+        self.jokesService = jokesService
+        $joke
+            .map { _ in false }
+            .assign(to: &$fetching)
     }
     
     public func fetchJoke() {
+        // 1 - fetching 시작
+        fetching = true
         
+        // 2 - subscription 시작
+        jokesService.publisher()
+        // 3 - error시 1회 재시도
+            .retry(1)
+        // 4 - publisher에서 받은 데이터 -> decode 연산자로 전달
+            .decode(type: Joke.self, decoder: Self.decoder)
+        // 5 - Joke 인스턴스에 구현된 에러로 변환
+            .replaceError(with: Joke.error)
+        // 6 - main queue에서 결과 받음
+            .receive(on: DispatchQueue.main)
+        // 7 - 받아온 data를 @Published joke에 할당
+            .assign(to: &$joke)
     }
     
     public func updateBackgroundColorForTranslation(_ translation: Double) {
