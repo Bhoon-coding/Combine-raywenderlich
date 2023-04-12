@@ -34,14 +34,35 @@ import Foundation
 import Combine
 @testable import ChuckNorrisJokesModel
 
-struct MockJokesService: JokeServiceDataPublisher {
-  let data: Data
-  let error: URLError?
-  
-  init(data: Data, error: URLError? = nil) {
-    self.data = data
-    self.error = error
-  }
-  
-  
+struct MockJokesService {
+    
+    
+    let data: Data
+    let error: URLError?
+    
+    init(data: Data, error: URLError? = nil) {
+        self.data = data
+        self.error = error
+    }
+    
+    
+}
+
+extension MockJokesService: JokeServiceDataPublisher {
+    func publisher() -> AnyPublisher<Data, URLError> {
+        // 1 - mock publisher 생성 (초기값: data, 실패 유형 URLError)
+        let publisher = CurrentValueSubject<Data, URLError>(data)
+        
+        // 2 - 성공시 data send, 실패시 error send
+        DispatchQueue.global().asyncAfter(deadline: .now() + 0.1) {
+            if let error = error {
+                publisher.send(completion: .failure(error))
+            } else {
+                publisher.send(data)
+            }
+        }
+        
+        // 3 - erase publisher
+        return publisher.eraseToAnyPublisher()
+    }
 }
