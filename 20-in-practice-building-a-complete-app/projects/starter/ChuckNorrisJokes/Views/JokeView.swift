@@ -78,6 +78,7 @@ struct JokeView: View {
         })
     }
     
+    @Environment(\.managedObjectContext) private var viewContext
     @ObservedObject private var viewModel = JokesViewModel()
     
     @State private var showJokeView = false
@@ -138,6 +139,13 @@ struct JokeView: View {
             cardTranslation = .zero
             self.viewModel.reset()
         default:
+            /// liked 상태면 JokeManagedObject에 joke, viewContext 저장
+            if decisionState == .liked {
+                JokeManagedObject.save(
+                    joke: viewModel.joke,
+                    inViewContext: viewContext
+                )
+            }
             // 3 - change값에 따라 cardview를 잠시 숨김
             let translation = change.translation
             let offset = (decisionState == .liked ? 2 : -2) * bounds.width
