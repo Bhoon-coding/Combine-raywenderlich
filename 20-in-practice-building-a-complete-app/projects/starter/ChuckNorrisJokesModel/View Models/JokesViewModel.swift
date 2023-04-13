@@ -74,17 +74,31 @@ public final class JokesViewModel {
     }
     
     public func updateBackgroundColorForTranslation(_ translation: Double) {
-        
+        switch translation {
+        case ...(-0.5):
+            backgroundColor = Color("Red")
+        case 0.5...:
+            backgroundColor = Color("Green")
+        default:
+            backgroundColor = Color("Gray")
+        }
     }
     
     public func updateDecisionStateForTranslation(
         _ translation: Double,
         andPredictedEndLocationX x: CGFloat,
         inBounds bounds: CGRect) {
-            
+            switch (translation, x) {
+            case (...(-0.6), ..<0):
+                decisionState = .disliked
+            case (0.6..., bounds.width...):
+                decisionState = .liked
+            default:
+                decisionState = .undecided
+            }
         }
     
     public func reset() {
-        
+        backgroundColor = Color("Gray")
     }
 }
