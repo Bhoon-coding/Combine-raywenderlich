@@ -46,5 +46,20 @@ extension JokeManagedObject {
     }
 }
 
-
+extension Collection where Element == JokeManagedObject, Index == Int {
+    // 1 - 전달된 view context 사용해 전달된 indices에서 object를 삭제 하는 메서드
+    func delete(at indices: IndexSet, inViewContext viewContext: NSManagedObjectContext) {
+        // 2 - JokeManagedObjects 를 전달해 삭제
+        indices.forEach { index in
+            viewContext.delete(self[index])
+        }
+        
+        // 3 - 삭제 후 저장
+        do {
+            try viewContext.save()
+        } catch {
+            fatalError("\(#file), \(#function), \(error.localizedDescription)")
+        }
+    }
+}
 
