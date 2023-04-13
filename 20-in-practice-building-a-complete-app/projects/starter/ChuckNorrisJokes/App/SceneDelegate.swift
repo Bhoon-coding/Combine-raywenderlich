@@ -30,14 +30,48 @@
 /// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 /// THE SOFTWARE.
 
+import Combine
+import CoreData
 import UIKit
 import SwiftUI
+
+// 1 - 네임스페이스 역할을 할 CoreDataStack
+private enum CoreDataStack {
+    // 2 - view context를 반환하는 container를 만듬. 객체 컨텍스트를 캡슐화하는 스택. 추후 Environment API로 앱 전체에 이 context를 공유
+    static var viewContext: NSManagedObjectContext = {
+        let container = NSPersistentContainer(name: "ChuckNorrisJokes")
+        
+        container.loadPersistentStores { _, error in
+            guard error == nil else {
+                fatalError("\(#file), \(#function), \(error!.localizedDescription)")
+            }
+        }
+        return container.viewContext
+    }()
+    
+    // 3 viewContext가 변했을때만 저장 하는 메서드
+    static func save() {
+        guard viewContext.hasChanges else { return }
+        
+        do {
+            try viewContext.save()
+        } catch {
+            fatalError("\(#file), \(#function), \(error.localizedDescription)")
+        }
+    }
+    
+}
+
+
+
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
   var window: UIWindow?
   
   func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
     let contentView = JokeView()
+      /// 전역으로 CoreData가 적용됨
+          .environment(\.managedObjectContext, CoreDataStack.viewContext)
     
     if let windowScene = scene as? UIWindowScene {
       let window = UIWindow(windowScene: windowScene)
@@ -47,11 +81,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
   }
 
+    /// background로 갔을시 CoreData에 저장
   func sceneDidEnterBackground(_ scene: UIScene) {
-    // Called as the scene transitions from the foreground to the background.
-    // Use this method to save data, release shared resources, and store enough scene-specific state information
-    // to restore the scene back to its current state.
-    
-    // Save changes in the application's managed object context when the application transitions to the background.
+      CoreDataStack.save()
   }
 }
