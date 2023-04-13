@@ -31,6 +31,7 @@
 		D2B46CAF230C7C6F003B2DFA /* SavedJokesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2B46CAE230C7C6F003B2DFA /* SavedJokesView.swift */; };
 		D2E94671230B53020012CFFB /* JokeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2E9466F230B53020012CFFB /* JokeView.swift */; };
 		D2E94672230B53020012CFFB /* JokeCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2E94670230B53020012CFFB /* JokeCardView.swift */; };
+		E188506129E7FC6C008801F3 /* JokeManagedObject+.swift in Sources */ = {isa = PBXBuildFile; fileRef = E188506029E7FC6C008801F3 /* JokeManagedObject+.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -93,6 +94,7 @@
 		D2E9466D230B1F280012CFFB /* JokesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JokesViewModel.swift; sourceTree = "<group>"; };
 		D2E9466F230B53020012CFFB /* JokeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JokeView.swift; sourceTree = "<group>"; };
 		D2E94670230B53020012CFFB /* JokeCardView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JokeCardView.swift; sourceTree = "<group>"; };
+		E188506029E7FC6C008801F3 /* JokeManagedObject+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JokeManagedObject+.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -254,6 +256,7 @@
 			isa = PBXGroup;
 			children = (
 				D28F40B523537953009EE25E /* ChuckNorrisJokes.xcdatamodeld */,
+				E188506029E7FC6C008801F3 /* JokeManagedObject+.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -462,6 +465,7 @@
 				D2568BB6230AEB6A00FFB4E3 /* HUDView.swift in Sources */,
 				D2E94672230B53020012CFFB /* JokeCardView.swift in Sources */,
 				D2568B7D230AE10300FFB4E3 /* AppDelegate.swift in Sources */,
+				E188506129E7FC6C008801F3 /* JokeManagedObject+.swift in Sources */,
 				D2568BB0230AEAA600FFB4E3 /* ChuckNorrisJokesStyleKit.swift in Sources */,
 				D2E94671230B53020012CFFB /* JokeView.swift in Sources */,
 				D2568B7F230AE10300FFB4E3 /* SceneDelegate.swift in Sources */,
