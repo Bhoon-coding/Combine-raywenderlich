@@ -129,7 +129,27 @@ struct JokeView: View {
     }
     
     private func handle(_ change: DragGesture.Value) {
-        cardTranslation = .zero
+        // 1 - viewModel의 현재 decisionState
+        let decisionState = viewModel.decisionState
+        
+        switch decisionState {
+            // 2 - 카드 위치 reset
+        case .undecided:
+            cardTranslation = .zero
+            self.viewModel.reset()
+        default:
+            // 3 - change값에 따라 cardview를 잠시 숨김
+            let translation = change.translation
+            let offset = (decisionState == .liked ? 2 : -2) * bounds.width
+            cardTranslation = CGSize(
+                width: translation.width + offset,
+                height: translation.height
+            )
+            showJokeView = false
+            
+            // 4 - joke card를 숨기고 처음위치로 이동 -> 새 joke를 호출하고 보여줌
+            reset()
+        }
     }
     
     private func reset() {
@@ -144,6 +164,8 @@ struct JokeView: View {
                 self.hudOpacity = 0
             }
         }
+        self.viewModel.reset()
+        self.viewModel.fetchJoke()
     }
 }
 
